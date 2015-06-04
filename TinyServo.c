@@ -120,21 +120,3 @@ int main(void)
 	}
 	
 }	
-/*
-
-void isr(void)
-{
- PORTB&=~mask;
- mask<<=1;     
- s_no+=1;
- if (s_no>7) 
-  {
-  s_no=0;
-  mask=1;
-  }
- PORTB|=mask; 
- OCR1A+=pw[s_no];
-}
-
-
-*/
