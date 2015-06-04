@@ -27,8 +27,8 @@
 
 #include <avr/io.h>
 
-volatile uint16_t tPulse = 21000;			 //gloabal variable to set period of servo pulse
-volatile uint16_t hPulse = 1500;			//global variable to set the servo start position - 2500 = 180 degrees, 1500 = 90 degrees, 500 = 0 degrees (max and min are aproximated values)
+volatile uint16_t tPulse = 21000;	     //gloabal variable to set period of servo pulse
+volatile uint16_t hPulse = 1000;		//global variable to set the servo position - e.g. 2500 = 180 degrees, 1500 = 90 degrees, 500 = 0 degrees (values depends on servo)
 
 volatile uint8_t tot_overflow;		//global variable to count the number of counter1 overflows  
 volatile uint16_t oTime;		//global variable to store value of overflow and TCNT1
@@ -37,7 +37,7 @@ void timerSetup (void)
 {
 	if (TIFR & (1 << TOV1) )		//if counter1 overflow flag idicates overflow
 	{
-		TIFR |= (1 << TOV1);		// clear counter1 overflow-flag
+		TIFR |= (1 << TOV1);		//clear counter1 overflow-flag
 		
 		tot_overflow ++;		//increase tot_overflow with one every time counter1 overflow
 	}
@@ -51,56 +51,54 @@ void timerSetup (void)
 
 }
 
-void servoPosC (uint16_t pos, uint8_t speed)		//sevo travel clockwise - position and speed
+void servoPosC (uint16_t pos, uint8_t speed)		//sets sevo travel clockwise - position (µs) and speed (µs/pos)
 {
-	while (hPulse <= pos)		
+	while (hPulse <= pos)		//do this until pos is reached		
 	{
-		timerSetup();
+		timerSetup();		//16-bit setup for counter
 		
-		if (oTime > hPulse)
+		if (oTime > hPulse)			//check if HIGH pulse (pos) is done 
 		{
-			PORTB &= ~(1 << servoPin);
+			PORTB &= ~(1 << servoPin);		//sets servoPin LOW
 		}
 		
-		if (oTime > tPulse-hPulse)
+		if (oTime > tPulse-hPulse)		//check if LOW pulse (period) is done
 		{
-			PORTB |= (1 << servoPin);
+			PORTB |= (1 << servoPin);		//sets servoPin HIGH
 			
-			hPulse += speed;
+			hPulse += speed;		//sets travel speed (µs/pos)
 			
-			oTime = 0;
+			oTime = 0;		//resets 16-bit variable
 			tot_overflow = 0;		//resets tot_overflow variable  
 			TIFR |= (1 << TOV1);		// clear counter1 overflow-flag
 			TCNT1 = 0;		//resets Timer/Counter1
-			
 		}
 		
 	}
 	
 }
 
-void servoPosCC (uint16_t pos, uint8_t speed)		//sevo travel counterclockwise - position and speed
+void servoPosCC (uint16_t pos, uint8_t speed)		//sets sevo travel counterclockwise - position (µs) and speed (µs/pos)
 {
-	while (hPulse >= pos)
+	while (hPulse >= pos)		//do this until pos is reahed
 	{
-		timerSetup();
+		timerSetup();		//16-bit setup for counter
 		
-		if (oTime > hPulse)
+		if (oTime > hPulse)			//check if HIGH pulse (pos) is done 
 		{
-			PORTB &= ~(1 << servoPin);
+			PORTB &= ~(1 << servoPin);		//sets servoPin LOW
 		}
 		
-		if (oTime > tPulse-hPulse)
+		if (oTime > tPulse-hPulse)		//check if LOW pulse (period) is done
 		{
-			PORTB |= (1 << servoPin);
+			PORTB |= (1 << servoPin);		//sets servoPin HIGH
 			
-			hPulse -= speed;		
+			hPulse -= speed;		//sets travel speed (µs/pos)
 			
-			oTime = 0;
+			oTime = 0;		//resets 16-bit variable
 			tot_overflow = 0;		//resets tot_overflow variable  
 			TIFR |= (1 << TOV1);		// clear counter1 overflow-flag
 			TCNT1 = 0;		//resets Timer/Counter1
-			
 		}
 		
 	}
@@ -110,19 +108,15 @@ void servoPosCC (uint16_t pos, uint8_t speed)		//sevo travel counterclockwise - 
 
 int main(void)
 {
-	DDRB |= (1 << servoPin);
+	DDRB |= (1 << servoPin);		//sets ervoPin as output
 	
 	TCCR1 |= (1 << CS12);	//set Timer/Counter1 prescaler to increment every 1 µs (PCK/8)
 	
 	while(1)		
 	{
-		servoPosC(2600, 10);		//travel clockwise - position and speed
+		servoPosC(2000, 5);		//travel clockwise (depends on servo) - position (µs) and speed (µs/pos)
 			
-		servoPosCC(2000, 5);		//travel counterclockwise  -position and speed
-	
-		servoPosCC(600, 20);		//travel counterclockwise  - position and speed
-		
-		servoPosC(900, 1);		//travel clockwise - position and speed
+		servoPosCC(1000, 5);		//travel counterclockwise (depends on servo) -position (µs) and speed (µs/pos)
 	}
 	
 }	
