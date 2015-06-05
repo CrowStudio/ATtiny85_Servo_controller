@@ -30,12 +30,6 @@
  
 #define F_CPU 8000000UL			//defines clock as 8Mhz
 
-#define PORTB0 = servo[0]		//defines PB0 as servo[0]
-#define PORTB1 = servo[1]		//defines PB1 as servo[1]
-#define PORTB2 = servo[2]		//defines PB2 as servo[2]
-#define PORTB3 = servo[3]		//defines PB3 as servo[3]
-#define PORTB4 = servo[4]		//defines PB4 as servo[4]
-
 #include <avr/io.h>
 
 volatile uint16_t tPulse = 21000;	     //gloabal variable to set period of servo pulse
@@ -129,7 +123,7 @@ int main(void)
 	
 	for (i = 0; i < sizeof(servo); i++)
 	{
-		DDRB |= (1 << servo[i]);	//sets PB0-PB4 as output
+		DDRB |= (1 << servo[i]);	//sets PB0-PB4 as output pins
 	}
 	
 	while(1)		
