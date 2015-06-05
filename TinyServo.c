@@ -74,28 +74,19 @@ void timerSetup (void)
 
 		if (oTime > hPulse)		//check if HIGH pulse (pos) is done
 		{
-			if(channel < sizeof(servo))
-			{
-				PORTB &= ~(1 << servo[channel]);
-			}
-			
+			PORTB &= ~(1 << servo[channel]);	
 		}
 		
 		if (oTime > tPulse-hPulse)			//check if LOW pulse (period) is done 
 		{	
-			if(channel < sizeof(servo))
-			{
-				PORTB |= (1 << servo[channel]);	
-				
-				hPulse += speed;		//sets travel speed (µs/pos)	
-				
-				oTime = 0;		//resets 16-bit variable
-				tot_overflow = 0;		//resets tot_overflow variable  
-				TIFR |= (1 << TOV1);		// clear counter1 overflow-flag
-				TCNT1 = 0;		//resets Timer/Counter1	
-				
-			}
-	
+			PORTB |= (1 << servo[channel]);	
+			
+			hPulse += speed;		//sets travel speed (µs/pos)	
+			
+			oTime = 0;		//resets 16-bit variable
+			tot_overflow = 0;		//resets tot_overflow variable  
+			TIFR |= (1 << TOV1);		// clear counter1 overflow-flag
+			TCNT1 = 0;		//resets Timer/Counter1	
 		}
 		
 	}
@@ -110,28 +101,19 @@ void timerSetup (void)
 
 		if (oTime > hPulse)		//check if HIGH pulse (pos) is done
 		{
-			if(channel < sizeof(servo))
-			{
-				PORTB &= ~(1 << servo[channel]);
-			}
-			
+			PORTB &= ~(1 << servo[channel]);
 		}
 		
 		if (oTime > tPulse-hPulse)			//check if LOW pulse (period) is done 
 		{	
-			if(channel < sizeof(servo))
-			{
-				PORTB |= (1 << servo[channel]);	
+			PORTB |= (1 << servo[channel]);	
 				
-				hPulse -= speed;		//sets travel speed (µs/pos)	
-				
-				oTime = 0;		//resets 16-bit variable
-				tot_overflow = 0;		//resets tot_overflow variable  
-				TIFR |= (1 << TOV1);		// clear counter1 overflow-flag
-				TCNT1 = 0;		//resets Timer/Counter1	
-				
-			}
-
+			hPulse -= speed;		//sets travel speed (µs/pos)	
+			
+			oTime = 0;		//resets 16-bit variable
+			tot_overflow = 0;		//resets tot_overflow variable  
+			TIFR |= (1 << TOV1);		// clear counter1 overflow-flag
+			TCNT1 = 0;		//resets Timer/Counter1	
 		}
 		
 	}
